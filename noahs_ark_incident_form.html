@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noah's Ark Shelter - Incident Report Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Additional styles for printing (kept for reference if needed) */
+        @media print {
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .no-print { display: none; }
+            .print-break-inside-avoid { break-inside: avoid; }
+            input, textarea, select {
+                border: 1px solid #ccc !important;
+                background-image: none !important;
+                appearance: auto !important;
+                box-shadow: none !important; /* Remove shadow on print */
+            }
+            .form-section { margin-bottom: 1rem; }
+            .header-contact-info { font-size: 0.8rem; margin-right: 0.5rem; }
+            .header-logo { height: 5rem !important; }
+            #other_incident_details.hidden { display: none; }
+        }
+        /* Use Inter font */
+        body { font-family: 'Inter', sans-serif; }
+        /* Base styles for form elements */
+        label { font-weight: 600; margin-bottom: 0.25rem; display: block; color: #374151; }
+        input[type="text"], input[type="datetime-local"], textarea {
+            border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; border-radius: 0.375rem;
+            width: 100%; margin-bottom: 0.75rem; box-shadow: inset 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            /* Ensure consistent line-height with select */
+            line-height: normal;
+        }
+        input[type="text"]:focus, input[type="datetime-local"]:focus, textarea:focus {
+            outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgb(59 130 246 / 0.5);
+        }
+        textarea { min-height: 100px; }
+
+        /* --- Updated styling for the select dropdown --- */
+        select {
+            appearance: none; -webkit-appearance: none; -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1em 1em;
+            padding-right: 3rem;
+            /* Borders for subtle 3D effect */
+            border-width: 1px;
+            border-color: #e5e7eb; /* Top/Left border (gray-200) */
+            border-bottom-color: #9ca3af; /* Bottom border (gray-400) */
+            border-right-color: #9ca3af; /* Right border (gray-400) */
+            /* Ensure same vertical padding as inputs */
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            padding-left: 0.75rem;
+            border-radius: 0.375rem; /* rounded-md */
+            width: 100%; margin-bottom: 0.75rem;
+            /* Subtle outer shadow for lift */
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            background-color: #f9fafb; /* Slightly off-white background (gray-50) */
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            color: #374151;
+            cursor: pointer; /* Indicate it's clickable */
+            /* Add line-height to match inputs */
+            line-height: normal;
+        }
+        select:required:invalid { color: #9ca3af; }
+        option[value=""][disabled] { display: none; }
+        option { color: #1f2937; background-color: #ffffff; } /* Ensure options have white background */
+        select:focus {
+            outline: none;
+            border-color: #3b82f6; /* blue-500 */
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1), 0 0 0 2px rgb(59 130 246 / 0.5); /* Keep existing shadow + add focus ring */
+        }
+        /* --- End of updated select styling --- */
+
+        /* Radio/checkbox */
+        .radio-group, .checkbox-group { display: flex; gap: 1rem; margin-bottom: 0.75rem; align-items: center; }
+        .radio-group label, .checkbox-group label { font-weight: normal; margin-bottom: 0; color: #374151; }
+        .radio-group input, .checkbox-group input { margin-right: 0.25rem; color: #3b82f6; }
+        .radio-group input:focus, .checkbox-group input:focus { box-shadow: 0 0 0 2px rgb(59 130 246 / 0.5); }
+        /* Submission status message */
+        #submissionStatus { margin-top: 1rem; text-align: center; font-weight: 600; }
+        .status-success { color: #16a34a; } /* green-600 */
+        .status-error { color: #dc2626; } /* red-600 */
+        .status-submitting { color: #6b7280; } /* gray-500 */
+        /* Utility class to hide elements */
+        .hidden { display: none; }
+    </style>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-4 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-lg shadow-md print:shadow-none">
+
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-300 pb-4 mb-6">
+            <div class="text-center sm:text-left mb-4 sm:mb-0">
+                <h1 class="text-2xl font-bold text-gray-800">Noah's Ark Shelter</h1>
+                <h2 class="text-xl font-semibold text-gray-700">Incident Report Form</h2>
+            </div>
+            <div class="flex items-center space-x-4">
+                 <div class="text-sm text-gray-600 text-right header-contact-info">
+                    <p>117 E. 2nd Street, Wapato, WA 98951</p>
+                    <p>(509) 877-6337</p>
+                </div>
+                 <img
+                    src="https://generatinghope.org/wp-content/uploads/2022/10/Generating-Hope-Logo.png"
+                    alt="Generating Hope Logo"
+                    class="h-24 w-auto object-contain header-logo"
+                    onerror="this.onerror=null; this.src='https://placehold.co/220x96/cccccc/ffffff?text=Logo+Not+Found'; this.alt='Logo Placeholder';"
+                >
+            </div>
+        </div>
+
+        <form id="incident-form">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 form-section print-break-inside-avoid">
+                <div>
+                    <label for="incident_datetime">Date & Time of Incident:</label>
+                    <input type="datetime-local" id="incident_datetime" name="incident_datetime" required class="w-full">
+                </div>
+                <div>
+                    <label for="incident_location">Location of Incident:</label>
+                    <input type="text" id="incident_location" name="incident_location" placeholder="e.g., Common Area, Room 102, Kitchen" required class="w-full">
+                </div>
+            </div>
+
+            <div class="mb-6 form-section print-break-inside-avoid">
+                <label for="incident_type">Type of Incident:</label>
+                <select id="incident_type" name="incident_type" required class="w-full">
+                    <option value="" disabled selected>Select type...</option>
+                    <option value="medical">Medical Emergency</option>
+                    <option value="behavioral">Behavioral Issue</option>
+                    <option value="safety">Safety Hazard/Concern</option>
+                    <option value="security">Security Breach</option>
+                    <option value="property">Property Damage</option>
+                    <option value="interpersonal">Interpersonal Conflict</option>
+                    <option value="policy">Policy Violation</option>
+                    <option value="other">Other (Specify Below)</option>
+                </select>
+                <div id="other_incident_details" class="mt-2 hidden">
+                    <label for="incident_type_other">If 'Other', please specify:</label>
+                    <input type="text" id="incident_type_other" name="incident_type_other" placeholder="Specify other type" class="w-full">
+                </div>
+            </div>
+
+            <div class="mb-6 form-section print-break-inside-avoid">
+                <label for="persons_involved">Name(s) & Role(s) of Person(s) Involved:</label>
+                <textarea id="persons_involved" name="persons_involved" placeholder="List names and specify if Resident, Staff, Volunteer, Visitor, etc." required class="w-full"></textarea>
+            </div>
+
+            <div class="mb-6 form-section print-break-inside-avoid">
+                <label for="witnesses">Witness(es):</label>
+                <textarea id="witnesses" name="witnesses" placeholder="List names and contact info (if available) of anyone who witnessed the incident." class="w-full"></textarea>
+            </div>
+
+            <div class="mb-6 form-section print-break-inside-avoid">
+                <label for="description">Detailed Description of Incident:</label>
+                <textarea id="description" name="description" placeholder="Provide a factual, objective account of what happened. Include sequence of events, specific actions, statements made, etc." required class="w-full"></textarea>
+            </div>
+
+            <div class="mb-6 form-section print-break-inside-avoid">
+                <label for="action_taken">Immediate Action Taken:</label>
+                <textarea id="action_taken" name="action_taken" placeholder="Describe the immediate steps taken in response to the incident (e.g., first aid administered, police called, verbal de-escalation, separated parties)." required class="w-full"></textarea>
+            </div>
+
+             <div class="mb-6 form-section print-break-inside-avoid">
+                 <label>Follow-up Required?</label>
+                 <div class="radio-group">
+                    <input type="radio" id="followup_yes" name="followup_required" value="yes">
+                    <label for="followup_yes">Yes</label>
+                    <input type="radio" id="followup_no" name="followup_required" value="no" checked>
+                    <label for="followup_no">No</label>
+                 </div>
+                 <label for="followup_details" class="mt-2">If 'Yes', describe necessary follow-up:</label>
+                 <textarea id="followup_details" name="followup_details" placeholder="e.g., Contact supervisor, file police report, schedule meeting, repair damage." class="w-full"></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 form-section print-break-inside-avoid">
+                <div>
+                    <label for="reported_by_name">Reported By (Name):</label>
+                    <select id="reported_by_name" name="reported_by_name" required class="w-full">
+                        <option value="" disabled selected>Select name...</option>
+                        <option value="Megan P.">Megan P.</option>
+                        <option value="Corey K.">Corey K.</option>
+                        <option value="Leticia Q.">Leticia Q.</option>
+                        <option value="Setina Q.">Setina Q.</option>
+                        <option value="Rico C.">Rico C.</option>
+                        <option value="Jaxsyn L.">Jaxsyn L.</option>
+                        <option value="Ron H.">Ron H.</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="reported_by_title">Title:</label>
+                    <input type="text" id="reported_by_title" name="reported_by_title" placeholder="e.g., Case Manager, Security Staff, Volunteer" required class="w-full">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 form-section print-break-inside-avoid">
+                 <div>
+                    <label for="report_datetime">Date & Time of Report:</label>
+                    <input type="datetime-local" id="report_datetime" name="report_datetime" required class="w-full">
+                 </div>
+                 <div></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 pt-6 border-t border-gray-300 form-section print-break-inside-avoid">
+                <div>
+                    <label>Reporter's Signature:</label>
+                    <div class="text-sm text-gray-500 mt-2">(Signature captured via submission record)</div>
+                </div>
+                 <div>
+                    <label>Supervisor's Signature (if applicable):</label>
+                    <div class="text-sm text-gray-500 mt-2">(Supervisor review process separate)</div>
+                </div>
+            </div>
+
+            <div id="submissionStatus"></div>
+
+            <div class="mt-10 text-center no-print">
+                <button type="submit" id="submitButton" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
+                    Submit Report
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        // !! IMPORTANT !! Make sure this URL is correct
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyICdj3puZhDqmVAIFUo_wBTg1CuB26SnFrZavKn3jPUHejp8J0Ojjm-pht1mb146ypXg/exec';
+
+        const form = document.getElementById('incident-form');
+        const submitButton = document.getElementById('submitButton');
+        const statusDiv = document.getElementById('submissionStatus');
+        const incidentTypeSelect = document.getElementById('incident_type');
+        const otherDetailsDiv = document.getElementById('other_incident_details');
+        const otherInput = document.getElementById('incident_type_other');
+
+        // Function to toggle visibility of the 'Other' field
+        function toggleOtherDetails() {
+            if (incidentTypeSelect.value === 'other') {
+                otherDetailsDiv.classList.remove('hidden');
+                otherInput.required = true;
+            } else {
+                otherDetailsDiv.classList.add('hidden');
+                otherInput.required = false;
+                otherInput.value = '';
+            }
+        }
+
+        // Add event listener to the incident type dropdown
+        incidentTypeSelect.addEventListener('change', toggleOtherDetails);
+
+        // Form submission logic
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            submitButton.disabled = true;
+            statusDiv.textContent = 'Submitting...';
+            statusDiv.className = 'status-submitting';
+
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                 if (key === 'followup_required') {
+                     const checkedRadio = form.querySelector('input[name="followup_required"]:checked');
+                     data[key] = checkedRadio ? checkedRadio.value : 'No';
+                 } else {
+                    if (key === 'incident_type_other' && incidentTypeSelect.value !== 'other') {
+                        // Don't include it if 'Other' wasn't selected
+                    } else {
+                        data[key] = value;
+                    }
+                 }
+            });
+
+            data['submission_timestamp'] = new Date().toISOString();
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json', },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Success:', result);
+                if (result.status === 'success') {
+                    statusDiv.textContent = 'Report submitted successfully!';
+                    statusDiv.className = 'status-success';
+                    form.reset();
+                    toggleOtherDetails(); // Re-hide the 'other' field after reset
+                } else {
+                    statusDiv.textContent = `Submission failed: ${result.message || 'Unknown error'}`;
+                    statusDiv.className = 'status-error';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                statusDiv.textContent = 'Submission failed. Check console for details.';
+                statusDiv.className = 'status-error';
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+            });
+        });
+
+        // Set default report date/time & initial 'Other' field check
+        function getFormattedDateTimeNow() {
+            const now = new Date();
+            const timezoneOffset = now.getTimezoneOffset() * 60000;
+            const localISOTime = (new Date(now - timezoneOffset)).toISOString().slice(0, 16);
+            return localISOTime;
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const reportDateTimeField = document.getElementById('report_datetime');
+            if (reportDateTimeField) {
+                reportDateTimeField.value = getFormattedDateTimeNow();
+            }
+            toggleOtherDetails(); // Initial check for the 'Other' field visibility
+        });
+    </script>
+</body>
+</html>
